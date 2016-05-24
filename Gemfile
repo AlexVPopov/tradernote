@@ -6,6 +6,7 @@ gem 'rails-api'
 gem 'puma'
 gem 'pg'
 gem 'figaro'
+gem 'active_model_serializers', '~> 0.10.0'
 
 group :development, :test do
   gem 'awesome_print'
