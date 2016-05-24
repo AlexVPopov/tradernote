@@ -4,7 +4,24 @@ ruby '2.3.0'
 gem 'rails', '4.2.5'
 gem 'rails-api'
 gem 'puma'
-gem 'spring', :group => :development
 gem 'pg'
 gem 'figaro'
+
+group :development, :test do
+  gem 'awesome_print'
+  gem 'pry-byebug'
+  gem 'pry-rails'
+  gem 'rspec-rails'
+end
+
+group :development do
+  gem 'bullet'
+  gem 'fabrication'
+  gem 'ffaker'
+  gem 'spring'
+end
+
+group :test do
+  gem 'shoulda-matchers'
+end
 
