@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-  it('has a valid fabricator') { expect(Fabricate :user).to be_valid }
+  it('has a valid fabricator') { expect(Fabricate(:user)).to be_valid }
   it { should have_secure_password }
   it { should have_db_index :email }
 
