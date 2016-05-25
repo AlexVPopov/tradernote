@@ -16,12 +16,13 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'pry-rails'
   gem 'rspec-rails'
-  gem 'spring-commands-rspec'
 end
 
 group :development do
   gem 'bullet'
   gem 'spring'
+  gem 'spring-commands-rspec'
+  gem 'rubocop', require: false
 end
 
 group :test do
