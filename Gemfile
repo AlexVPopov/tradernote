@@ -7,18 +7,20 @@ gem 'puma'
 gem 'pg'
 gem 'figaro'
 gem 'active_model_serializers', '~> 0.10.0'
+gem 'bcrypt'
 
 group :development, :test do
   gem 'awesome_print'
+  gem 'fabrication'
+  gem 'ffaker'
   gem 'pry-byebug'
   gem 'pry-rails'
   gem 'rspec-rails'
+  gem 'spring-commands-rspec'
 end
 
 group :development do
   gem 'bullet'
-  gem 'fabrication'
-  gem 'ffaker'
   gem 'spring'
 end
 
