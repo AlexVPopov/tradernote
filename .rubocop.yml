@@ -1,0 +1,25 @@
+AllCops:
+  Include:
+    - Rakefile
+    - config.ru
+  Exclude:
+    - db/schema.rb
+    - bin/**/*
+
+Metrics/LineLength:
+  Max: 90
+  Exclude:
+    - 'config/initializers/secret_token.rb'
+
+Rails:
+  Enabled: true
+
+Style/BlockComments:
+  Exclude:
+    - 'spec/spec_helper.rb'
+
+Style/Documentation:
+  Enabled: false
+
+Style/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
