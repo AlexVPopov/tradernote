@@ -4,6 +4,7 @@ AllCops:
     - config.ru
   Exclude:
     - db/schema.rb
+    - db/migrate/*acts_as_taggable_on*
     - bin/**/*
 
 Metrics/LineLength:
