@@ -7,4 +7,6 @@ class User < ActiveRecord::Base
             presence: true,
             uniqueness: true,
             format: {with: /@/, message: 'must contain @'}
+
+  acts_as_tagger
 end
