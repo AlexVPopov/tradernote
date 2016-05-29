@@ -5,5 +5,7 @@ Rails.application.routes.draw do
         constraints: APIVersion.new('v1', true),
         defaults: {format: :json} do
     resources :users, only: :create
+
+    resources :authentications, path: 'authenticate', only: :create
   end
 end
