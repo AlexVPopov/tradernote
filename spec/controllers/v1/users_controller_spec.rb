@@ -9,6 +9,8 @@ RSpec.describe V1::UsersController, type: :controller do
       should permit(*permitted_params).for(:create, params: params).on(:user)
     end
 
+    it { should route(:post, '/users').to(action: :create, format: :json) }
+
     context 'with valid parameters' do
       let(:user_attributes) { Fabricate.attributes_for(:user) }
 
