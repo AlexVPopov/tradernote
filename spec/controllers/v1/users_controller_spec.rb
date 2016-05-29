@@ -40,7 +40,7 @@ RSpec.describe V1::UsersController, type: :controller do
 end
 
 def post_create(params)
-  request.headers['Accept'] = 'application/vnd.tradernote.v1+json'
+  request.headers.merge!(accept_header)
 
   post :create, user: params
 end
