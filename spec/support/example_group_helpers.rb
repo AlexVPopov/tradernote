@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ExampleGroupHelpers
   def matches_json_schema(schema)
     it 'matches the expected json schema' do
