@@ -32,7 +32,8 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-  config.include SpecHelpers
+  config.include ExampleHelpers
+  config.extend ExampleGroupHelpers
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction

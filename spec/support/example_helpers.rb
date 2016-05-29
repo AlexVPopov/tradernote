@@ -1,4 +1,4 @@
-module SpecHelpers
+module ExampleHelpers
   def accept_header
     {'Accept' => 'application/vnd.tradernote.v1+json'}
   end

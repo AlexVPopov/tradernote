@@ -11,9 +11,7 @@ RSpec.describe 'Users', type: :request do
         expect(response).to have_http_status(200)
       end
 
-      it 'matches the expected schema' do
-        expect(response).to match_response_schema('user')
-      end
+      matches_json_schema('user')
 
       it 'returns a user with correct attributes' do
         user = JSON.parse(response.body, symbolize_names: true)[:user]
