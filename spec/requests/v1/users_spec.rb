@@ -48,5 +48,5 @@ RSpec.describe 'Users', type: :request do
 end
 
 def post_users(params)
-  post '/users', {user: params}, 'Accept' => 'application/vnd.tradernote.v1+json'
+  post '/users', {user: params}, accept_header
 end
