@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UsersController, type: :controller do
+RSpec.describe V1::UsersController, type: :controller do
   describe 'create' do
     it do
       params = {user: Fabricate.attributes_for(:user)}
@@ -39,5 +39,7 @@ RSpec.describe UsersController, type: :controller do
 end
 
 def post_create(params)
-  post :create, {user: params}, format: :json
+  request.headers['Accept'] = 'application/vnd.tradernote.v1+json'
+
+  post :create, user: params
 end
