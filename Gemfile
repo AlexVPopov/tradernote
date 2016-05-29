@@ -28,6 +28,6 @@ end
 
 group :test do
   gem 'database_cleaner'
-  gem 'json_schema'
+  gem 'json-schema'
   gem 'shoulda-matchers'
 end
