@@ -1,1 +1,1 @@
-ActiveModelSerializers.config.schema_path = 'spec/support/schemas'
+ActiveModelSerializers.config.adapter = :json
