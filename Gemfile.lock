@@ -64,6 +64,7 @@ GEM
       activesupport (>= 4.1.0)
     i18n (0.7.0)
     json (1.8.3)
+    json_schema (0.12.4)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
     mail (2.6.4)
@@ -179,6 +180,7 @@ DEPENDENCIES
   fabrication
   ffaker
   figaro
+  json_schema
   pg
   pry-byebug
   pry-rails
