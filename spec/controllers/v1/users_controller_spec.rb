@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe V1::UsersController, type: :controller do
@@ -7,6 +8,8 @@ RSpec.describe V1::UsersController, type: :controller do
       permitted_params = %i(email password password_confirmation)
       should permit(*permitted_params).for(:create, params: params).on(:user)
     end
+
+    it { should route(:post, '/users').to(action: :create, format: :json) }
 
     context 'with valid parameters' do
       let(:user_attributes) { Fabricate.attributes_for(:user) }
@@ -39,7 +42,7 @@ RSpec.describe V1::UsersController, type: :controller do
 end
 
 def post_create(params)
-  request.headers['Accept'] = 'application/vnd.tradernote.v1+json'
+  request.headers.merge!(accept_header)
 
   post :create, user: params
 end
