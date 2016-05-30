@@ -11,15 +11,17 @@ RSpec.describe V1::UsersController, type: :controller do
 
     it { should route(:post, '/users').to(action: :create, format: :json) }
 
+    it { should_not use_before_action(:authenticate) }
+
     context 'with valid parameters' do
       let(:user_attributes) { Fabricate.attributes_for(:user) }
 
       it 'saves a new user to the database' do
-        expect { post_create(user_attributes) }.to change(User, :count).by(1)
+        expect { create_user(user_attributes) }.to change(User, :count).by(1)
       end
 
       it do
-        post_create(user_attributes)
+        create_user(user_attributes)
 
         should respond_with(200)
       end
@@ -29,11 +31,11 @@ RSpec.describe V1::UsersController, type: :controller do
       let(:user_attributes) { Fabricate.attributes_for(:user, email: nil) }
 
       it 'does not save a new user to the database' do
-        expect { post_create(user_attributes) }.not_to change(User, :count)
+        expect { create_user(user_attributes) }.not_to change(User, :count)
       end
 
       it do
-        post_create(user_attributes)
+        create_user(user_attributes)
 
         should respond_with(422)
       end
@@ -41,7 +43,7 @@ RSpec.describe V1::UsersController, type: :controller do
   end
 end
 
-def post_create(params)
+def create_user(params)
   request.headers.merge!(accept_header)
 
   post :create, user: params
