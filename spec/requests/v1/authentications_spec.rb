@@ -8,24 +8,21 @@ RSpec.describe 'Authentications', type: :request do
     context 'with valid credentials' do
       before(:each) { post_authenticate(email: user.email, password: user.password) }
 
-      it 'responds with 200' do
-        expect(response).to have_http_status(200)
-      end
+      assert_response_code(200)
 
-      matches_json_schema('user')
+      assert_json_schema('user')
     end
 
     context 'with invalid credentials' do
       before(:each) { post_authenticate(email: user.email, password: 'wrong_password') }
 
-      it 'responds with 401' do
-        expect(response).to have_http_status(401)
-      end
-      matches_json_schema('errors')
+      assert_response_code(401)
 
-      it 'explains that wrong credentials have been supplied' do
-        errors = JSON.parse(response.body, symbolize_names: true)[:errors]
-        expect(errors).to match ['You have provided an invalid email or password.']
+      assert_json_schema('unauthorized')
+
+      it 'responds with correct message' do
+        message = JSON.parse(response.body)['message']
+        expect(message).to eq 'Bad credentials'
       end
     end
   end

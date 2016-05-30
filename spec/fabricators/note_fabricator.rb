@@ -4,4 +4,8 @@ Fabricator(:note) do
 
   title { FFaker::Lorem.phrase }
   body { FFaker::Lorem.paragraph }
+
+  after_build do |note, _transients|
+    note.user.tag(note, with: FFaker::Lorem.words(rand(1..3)), on: :tags)
+  end
 end

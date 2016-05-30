@@ -1,12 +1,8 @@
 {
   "type": "object",
-  "required": ["errors"],
+  "required": ["message", "errors"],
   "properties": {
-    "errors": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    }
+    "message": { "type": "string" },
+    "errors": { "type": "array", "items": { "type": "string" } }
   }
 }

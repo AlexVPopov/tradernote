@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe V1::AuthenticationsController, type: :controller do
@@ -5,6 +6,8 @@ RSpec.describe V1::AuthenticationsController, type: :controller do
     let(:user) { Fabricate :user }
 
     it { should route(:post, '/authenticate').to(action: :create, format: :json) }
+
+    it { should_not use_before_action(:authenticate) }
 
     context 'with valid credentials' do
       it do

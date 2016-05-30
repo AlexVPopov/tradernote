@@ -1,11 +1,15 @@
-class V1::AuthenticationsController < ApplicationController
-  def create
-    user = User.find_by(email: params[:email])
-    if user&.authenticate(params[:password])
-      render json: user
-    else
-      render json: {errors: ['You have provided an invalid email or password.']},
-             status: :unauthorized
+# frozen_string_literal: true
+module V1
+  class AuthenticationsController < ApplicationController
+    skip_before_action :authenticate
+
+    def create
+      user = User.find_by(email: params[:email])
+      if user&.authenticate(params[:password])
+        render json: user
+      else
+        render json: {message: 'Bad credentials'}, status: :unauthorized
+      end
     end
   end
 end
