@@ -7,4 +7,8 @@ module ExampleHelpers
   def authorization_header(token)
     {'Authorization' => "Token token=#{token}"}
   end
+
+  def tags
+    FFaker::Lorem.words(rand(1..3))
+  end
 end
