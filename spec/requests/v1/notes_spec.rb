@@ -6,12 +6,8 @@ RSpec.describe 'Notes', type: :request do
     let(:user) { Fabricate(:user) }
     let(:note_params) { Fabricate.attributes_for(:note).merge(tags: tags) }
 
-    context 'unauthenticated request' do
+    include_context 'unauthenticated' do
       before(:each) { post_notes(note_params, nil) }
-
-      assert_response_code(401)
-
-      assert_json_schema('unauthorized')
     end
 
     context 'authenticated request' do
@@ -37,9 +33,7 @@ RSpec.describe 'Notes', type: :request do
 
         before(:each) { post_notes(note_params, user.auth_token) }
 
-        assert_response_code(422)
-
-        assert_json_schema('errors')
+        include_examples 'validation failed'
 
         it 'returns the validation errors', skip_before: true do
           note = Fabricate.build(:note, note_params.except(:tags))
@@ -51,9 +45,55 @@ RSpec.describe 'Notes', type: :request do
       end
     end
   end
+
+  describe 'GET /notes/:id' do
+    let(:note) { Fabricate(:note) }
+
+    include_context 'unauthenticated' do
+      before(:each) { get_note(note.id, nil) }
+    end
+
+    context 'authenticated request' do
+      context 'note exists and requester is owner' do
+        before(:each) { get_note(note.id, note.user.auth_token) }
+
+        assert_response_code(200)
+
+        assert_json_schema('note')
+
+        it 'return the correct note' do
+          response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+
+          expect(response_note[:title]).to eq note.title
+          expect(response_note[:body]).to eq note.body
+          expect(response_note[:tags]).to contain_exactly(*note.tags_from(note.user))
+          expect(response_note[:user_id]).to eq note.user.id
+        end
+      end
+
+      context "note doesn't exists" do
+        before(:each) { get_note(note.id + rand(1..10), note.user.auth_token) }
+
+        include_examples 'record not found'
+      end
+
+      context 'requester is not owner' do
+        let(:another_user) { Fabricate(:user) }
+
+        before(:each) { get_note(note.id, another_user.auth_token) }
+
+        include_examples 'record not found'
+      end
+    end
+  end
 end
 
 def post_notes(params, token)
   headers = [accept_header, authorization_header(token)].reduce(&:merge)
   post '/notes', {note: params}, headers
+end
+
+def get_note(note_id, token)
+  headers = [accept_header, authorization_header(token)].reduce(&:merge)
+  get "/notes/#{note_id}", {}, headers
 end

@@ -25,9 +25,7 @@ RSpec.describe 'Users', type: :request do
         post_users(user_params) unless example.metadata[:skip_before]
       end
 
-      assert_response_code(422)
-
-      assert_json_schema('errors')
+      include_examples 'validation failed'
 
       it 'returns the validation errors', skip_before: true do
         user = Fabricate.build(:user, user_params)

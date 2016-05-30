@@ -11,4 +11,10 @@ module ExampleGroupHelpers
       expect(response).to have_http_status(code)
     end
   end
+
+  def assert_message(message)
+    it 'returns the correct message' do
+      expect(JSON.parse(response.body)['message']).to eq(message)
+    end
+  end
 end
