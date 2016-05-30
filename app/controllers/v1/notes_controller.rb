@@ -21,6 +21,10 @@ module V1
       end
     end
 
+    def index
+      render json: current_user.notes
+    end
+
     private
 
       def note_params

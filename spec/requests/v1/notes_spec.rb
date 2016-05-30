@@ -66,7 +66,7 @@ RSpec.describe 'Notes', type: :request do
 
           expect(response_note[:title]).to eq note.title
           expect(response_note[:body]).to eq note.body
-          expect(response_note[:tags]).to contain_exactly(*note.tags_from(note.user))
+          expect(response_note[:tags]).to match_array(note.tags_from(note.user))
           expect(response_note[:user_id]).to eq note.user.id
         end
       end
@@ -78,22 +78,63 @@ RSpec.describe 'Notes', type: :request do
       end
 
       context 'requester is not owner' do
-        let(:another_user) { Fabricate(:user) }
+        let(:other_user) { Fabricate(:user) }
 
-        before(:each) { get_note(note.id, another_user.auth_token) }
+        before(:each) { get_note(note.id, other_user.auth_token) }
 
         include_examples 'record not found'
+      end
+    end
+  end
+
+  describe 'GET /notes' do
+    let!(:user) { Fabricate(:user) }
+    let!(:notes) { Fabricate.times(3, :note, user: user) }
+    let!(:other_user) { Fabricate(:user) }
+    let!(:other_notes) { Fabricate.times(3, :note, user: other_user) }
+
+    include_context 'unauthenticated' do
+      before(:each) { get_notes(nil) }
+    end
+
+    context 'authenticated' do
+      before(:each) { get_notes(user.auth_token) }
+
+      assert_response_code(200)
+
+      assert_json_schema('notes')
+
+      it 'returns the correct notes' do
+        response_notes = JSON.parse(response.body, symbolize_names: true)[:notes]
+        titles = response_notes.map { |note| note[:title] }
+        bodies = response_notes.map { |note| note[:body] }
+        response_tags = response_notes.map { |note| note[:tags] }
+        user_ids = response_notes.map { |note| note[:user_id] }.uniq
+        note_tags = notes.map { |note| note.tags_from(note.user) }
+
+        expect(response_notes.count).to eq notes.count
+        expect(titles).to match_array(notes.map(&:title))
+        expect(bodies).to match_array(notes.map(&:body))
+        expect(response_tags.flatten).to match_array(note_tags.flatten)
+        expect(user_ids).to include(user.id)
+        expect(user_ids).not_to include(other_user.id)
       end
     end
   end
 end
 
 def post_notes(params, token)
-  headers = [accept_header, authorization_header(token)].reduce(&:merge)
-  post '/notes', {note: params}, headers
+  post '/notes', {note: params}, headers(token)
 end
 
 def get_note(note_id, token)
-  headers = [accept_header, authorization_header(token)].reduce(&:merge)
-  get "/notes/#{note_id}", {}, headers
+  get "/notes/#{note_id}", {}, headers(token)
+end
+
+def get_notes(token)
+  get '/notes', {}, headers(token)
+end
+
+def headers(token)
+  [accept_header, authorization_header(token)].reduce(&:merge)
 end

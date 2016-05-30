@@ -7,6 +7,7 @@ RSpec.describe V1::NotesController, type: :controller do
   describe 'routing' do
     it { should route(:post, '/notes').to(action: :create, format: :json) }
     it { should route(:get, '/notes/1').to(action: :show, format: :json, id: 1) }
+    it { should route(:get, '/notes').to(action: :index, format: :json) }
   end
 
   describe 'create' do
@@ -56,6 +57,10 @@ RSpec.describe V1::NotesController, type: :controller do
   end
 
   describe 'show' do
+    it { should use_before_action(:authenticate) }
+  end
+
+  describe 'index' do
     it { should use_before_action(:authenticate) }
   end
 end
