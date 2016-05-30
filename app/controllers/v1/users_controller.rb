@@ -8,7 +8,7 @@ module V1
       if user.save
         render json: user
       else
-        render json: {message: 'Validation failed.', errors: user.errors.full_messages},
+        render json: {message: 'Validation failed', errors: user.errors.full_messages},
                status: :unprocessable_entity
       end
     end

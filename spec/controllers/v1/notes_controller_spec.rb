@@ -4,17 +4,20 @@ require 'rails_helper'
 RSpec.describe V1::NotesController, type: :controller do
   let(:user) { Fabricate(:user) }
 
+  describe 'routing' do
+    it { should route(:post, '/notes').to(action: :create, format: :json) }
+    it { should route(:get, '/notes/1').to(action: :show, format: :json, id: 1) }
+  end
+
   describe 'create' do
+    it { should use_before_action(:authenticate) }
+
     it do
       pending('Possible bug in shoulda-matchers')
       params = {note: Fabricate.attributes_for(:note)}
       permitted_params = %i(title body)
       should permit(*permitted_params).for(:create, params: params)
     end
-
-    it { should route(:post, '/notes').to(action: :create, format: :json) }
-
-    it { should use_before_action(:authenticate) }
 
     context 'with valid parameters' do
       let(:note_params) { Fabricate.attributes_for(:note, user: user).merge(tags: tags) }
@@ -51,10 +54,20 @@ RSpec.describe V1::NotesController, type: :controller do
       end
     end
   end
+
+  describe 'show' do
+    it { should use_before_action(:authenticate) }
+  end
 end
 
 def create_note(params, token)
   request.headers.merge!(accept_header)
   request.headers.merge!(authorization_header(token))
   post :create, note: params
+end
+
+def show_note(note_id, token)
+  request.headers.merge!(accept_header)
+  request.headers.merge!(authorization_header(token))
+  get :show, id: note_id
 end

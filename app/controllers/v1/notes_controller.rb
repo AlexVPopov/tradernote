@@ -7,8 +7,17 @@ module V1
       if note.save
         render json: note
       else
-        render json: {message: 'Validation failed.', errors: note.errors.full_messages},
+        render json: {message: 'Validation failed', errors: note.errors.full_messages},
                status: :unprocessable_entity
+      end
+    end
+
+    def show
+      note = current_user.notes.find_by(id: params[:id])
+      if note
+        render json: note
+      else
+        render json: {message: 'Record not found'}, status: :not_found
       end
     end
 
