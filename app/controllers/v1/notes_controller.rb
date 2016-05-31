@@ -28,6 +28,11 @@ module V1
       end
     end
 
+    def destroy
+      note = current_user.notes.find_by(id: params[:id])
+      note&.destroy ? head(:no_content) : render_not_found
+    end
+
     private
 
       def note_params
