@@ -9,6 +9,6 @@ Rails.application.routes.draw do
 
     resources :authentications, path: 'authenticate', only: :create
 
-    resources :notes, only: [:create, :show, :index]
+    resources :notes, only: [:create, :show, :index, :update]
   end
 end

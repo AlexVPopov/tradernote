@@ -7,7 +7,7 @@ RSpec.describe 'Notes', type: :request do
     let(:note_params) { Fabricate.attributes_for(:note).merge(tags: tags) }
 
     include_context 'unauthenticated' do
-      before(:each) { post_notes(note_params, nil) }
+      before(:each) { post_notes(note_params) }
     end
 
     context 'authenticated request' do
@@ -50,11 +50,11 @@ RSpec.describe 'Notes', type: :request do
     let(:note) { Fabricate(:note) }
 
     include_context 'unauthenticated' do
-      before(:each) { get_note(note.id, nil) }
+      before(:each) { get_note(note.id) }
     end
 
     context 'authenticated request' do
-      context 'note exists and requester is owner' do
+      context 'note exists and requester is note owner' do
         before(:each) { get_note(note.id, note.user.auth_token) }
 
         assert_response_code(200)
@@ -77,7 +77,7 @@ RSpec.describe 'Notes', type: :request do
         include_examples 'record not found'
       end
 
-      context 'requester is not owner' do
+      context 'requester is not note owner' do
         let(:other_user) { Fabricate(:user) }
 
         before(:each) { get_note(note.id, other_user.auth_token) }
@@ -94,7 +94,7 @@ RSpec.describe 'Notes', type: :request do
     let!(:other_notes) { Fabricate.times(3, :note, user: other_user) }
 
     include_context 'unauthenticated' do
-      before(:each) { get_notes(nil) }
+      before(:each) { get_notes }
     end
 
     context 'authenticated' do
@@ -121,18 +121,85 @@ RSpec.describe 'Notes', type: :request do
       end
     end
   end
+
+  describe 'PATCH /notes/:id' do
+    let(:note) { Fabricate(:note) }
+    let(:update_prams) { {title: 'New title'} }
+
+    include_context 'unauthenticated' do
+      before(:each) { patch_note(note.id, update_prams) }
+    end
+
+    context 'authenticated' do
+      context 'requester is note owner' do
+        context 'with valid paramters' do
+          before(:each) do |example|
+            if example.metadata[:skip_before].blank?
+              patch_note(note.id, update_prams, note.user.auth_token)
+            end
+          end
+
+          assert_response_code(200)
+
+          assert_json_schema('note')
+
+          it 'updates title' do
+            response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+
+            expect(response_note[:title]).to eq(update_prams[:title])
+          end
+
+          it 'updates body', skip_before: true do
+            note_params = {body: 'New body'}
+            patch_note(note.id, note_params, note.user.auth_token)
+            response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+
+            expect(response_note[:body]).to eq(note_params[:body])
+          end
+
+          it 'updates tags', skip_before: true do
+            note_params = {tags: 'new tag,another new tag'}
+            patch_note(note.id, note_params, note.user.auth_token)
+            response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+
+            expect(response_note[:tags]).to eq(note_params[:tags].split(',').map(&:strip))
+          end
+        end
+
+        context 'with invalid paramters' do
+          let(:note_params) { {title: nil, body: nil} }
+
+          before(:each) { patch_note(note.id, note_params, note.user.auth_token) }
+
+          include_examples 'validation failed'
+        end
+      end
+
+      context 'requester is not note owner' do
+        let(:other_user) { Fabricate(:user) }
+
+        before(:each) { patch_note(note.id, update_prams, other_user.auth_token) }
+
+        include_examples 'record not found'
+      end
+    end
+  end
 end
 
-def post_notes(params, token)
+def post_notes(params, token = nil)
   post '/notes', {note: params}, headers(token)
 end
 
-def get_note(note_id, token)
+def get_note(note_id, token = nil)
   get "/notes/#{note_id}", {}, headers(token)
 end
 
-def get_notes(token)
+def get_notes(token = nil)
   get '/notes', {}, headers(token)
+end
+
+def patch_note(note_id, params, token = nil)
+  patch "/notes/#{note_id}", {note: params}, headers(token)
 end
 
 def headers(token)
