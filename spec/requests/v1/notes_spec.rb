@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-RSpec.describe 'Notes', type: :request do
+RSpec.describe 'Notes', type: :request, scope: :notes do
   describe 'POST /notes' do
     let(:user) { Fabricate(:user) }
     let(:note_params) { Fabricate.attributes_for(:note).merge(tags: tags) }
@@ -184,24 +184,38 @@ RSpec.describe 'Notes', type: :request do
       end
     end
   end
-end
 
-def post_notes(params, token = nil)
-  post '/notes', {note: params}, headers(token)
-end
+  describe 'DELETE /notes/:id' do
+    let(:note) { Fabricate(:note) }
 
-def get_note(note_id, token = nil)
-  get "/notes/#{note_id}", {}, headers(token)
-end
+    include_context 'unauthenticated' do
+      before(:each) { delete_note(note.id) }
+    end
 
-def get_notes(token = nil)
-  get '/notes', {}, headers(token)
-end
+    context 'authenticated' do
+      context 'requester is owner of note and note exists' do
+        before(:each) { delete_note(note.id, note.user.auth_token) }
 
-def patch_note(note_id, params, token = nil)
-  patch "/notes/#{note_id}", {note: params}, headers(token)
-end
+        assert_response_code(204)
 
-def headers(token)
-  [accept_header, authorization_header(token)].reduce(&:merge)
+        it 'response body has not content' do
+          expect(response.body).to be_blank
+        end
+      end
+
+      context 'note does not exist' do
+        before(:each) { delete_note(note.id + rand(1..10), note.user.auth_token) }
+
+        include_examples 'record not found'
+      end
+
+      context 'requester is not owner of note' do
+        let(:other_user) { Fabricate(:user) }
+
+        before(:each) { delete_note(note.id, other_user.auth_token) }
+
+        include_examples 'record not found'
+      end
+    end
+  end
 end

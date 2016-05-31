@@ -35,6 +35,8 @@ RSpec.configure do |config|
 
   config.include ExampleHelpers
   config.extend ExampleGroupHelpers
+  config.include NotesRequestSpecHelpers, type: :request, scope: :notes
+  config.include NotesControllerSpecHelpers, type: :controller, scope: :notes
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
