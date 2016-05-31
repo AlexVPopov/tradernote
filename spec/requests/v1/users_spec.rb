@@ -13,7 +13,7 @@ RSpec.describe 'Users', type: :request do
       assert_json_schema('user')
 
       it 'returns a user with correct attributes' do
-        user = JSON.parse(response.body, symbolize_names: true)[:user]
+        user = extract(response, :user)
         expect(user[:email]).to eq(user_params[:email])
       end
     end
@@ -32,7 +32,7 @@ RSpec.describe 'Users', type: :request do
         user.valid?
         post_users(user_params)
 
-        expect(JSON.parse(response.body)['errors']).to match(user.errors.full_messages)
+        expect(extract(response, :errors)).to match(user.errors.full_messages)
       end
     end
   end

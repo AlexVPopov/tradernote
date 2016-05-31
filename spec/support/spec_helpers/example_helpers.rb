@@ -11,4 +11,8 @@ module ExampleHelpers
   def tags
     FFaker::Lorem.words(rand(1..3))
   end
+
+  def extract(response, key)
+    JSON.parse(response.body, symbolize_names: true)[key]
+  end
 end

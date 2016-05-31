@@ -21,7 +21,7 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
         assert_json_schema('note')
 
         it 'returns a note with correct attributes' do
-          note = JSON.parse(response.body, symbolize_names: true)[:note]
+          note = extract(response, :note)
           expect(note[:title]).to eq(note_params[:title])
           expect(note[:body]).to eq(note_params[:body])
           expect(note[:tags]).to eq(note_params[:tags])
@@ -40,7 +40,7 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
           note.valid?
           post_notes(note_params, user.auth_token)
 
-          expect(JSON.parse(response.body)['errors']).to match(note.errors.full_messages)
+          expect(extract(response, :errors)).to match(note.errors.full_messages)
         end
       end
     end
@@ -62,7 +62,7 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
         assert_json_schema('note')
 
         it 'return the correct note' do
-          response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+          response_note = extract(response, :note)
 
           expect(response_note[:title]).to eq note.title
           expect(response_note[:body]).to eq note.body
@@ -105,7 +105,7 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
       assert_json_schema('notes')
 
       it 'returns the correct notes' do
-        response_notes = JSON.parse(response.body, symbolize_names: true)[:notes]
+        response_notes = extract(response, :notes)
         titles = response_notes.map { |note| note[:title] }
         bodies = response_notes.map { |note| note[:body] }
         response_tags = response_notes.map { |note| note[:tags] }
@@ -144,7 +144,7 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
           assert_json_schema('note')
 
           it 'updates title' do
-            response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+            response_note = extract(response, :note)
 
             expect(response_note[:title]).to eq(update_prams[:title])
           end
@@ -152,7 +152,7 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
           it 'updates body', skip_before: true do
             note_params = {body: 'New body'}
             patch_note(note.id, note_params, note.user.auth_token)
-            response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+            response_note = extract(response, :note)
 
             expect(response_note[:body]).to eq(note_params[:body])
           end
@@ -160,14 +160,14 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
           it 'updates tags', skip_before: true do
             note_params = {tags: 'new tag,another new tag'}
             patch_note(note.id, note_params, note.user.auth_token)
-            response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+            response_note = extract(response, :note)
 
             expect(response_note[:tags]).to eq(note_params[:tags].split(',').map(&:strip))
           end
 
           it 'removes tags', skip_before: true do
             patch_note(note.id, {tags: nil}, note.user.auth_token)
-            response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+            response_note = extract(response, :note)
 
             expect(response_note[:tags]).to be_blank
           end

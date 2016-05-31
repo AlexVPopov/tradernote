@@ -14,7 +14,7 @@ module ExampleGroupHelpers
 
   def assert_message(message)
     it 'returns the correct message' do
-      expect(JSON.parse(response.body)['message']).to eq(message)
+      expect(extract(response, :message)).to eq(message)
     end
   end
 end

@@ -21,7 +21,7 @@ RSpec.describe 'Authentications', type: :request do
       assert_json_schema('unauthorized')
 
       it 'responds with correct message' do
-        message = JSON.parse(response.body)['message']
+        message = extract(response, :message)
         expect(message).to eq 'Bad credentials'
       end
     end
