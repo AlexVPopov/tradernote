@@ -12,6 +12,7 @@ Metrics/LineLength:
   Max: 90
   Exclude:
     - 'config/initializers/secret_token.rb'
+    - 'db/seeds.rb'
 
 Rails:
   Enabled: true
