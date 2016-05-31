@@ -89,37 +89,42 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
 
   describe 'GET /notes' do
     let!(:user) { Fabricate(:user) }
-    let!(:notes) { Fabricate.times(3, :note, user: user) }
-    let!(:other_user) { Fabricate(:user) }
-    let!(:other_notes) { Fabricate.times(3, :note, user: other_user) }
 
-    include_context 'unauthenticated' do
-      before(:each) { get_notes }
-    end
+    context 'without query parameters' do
+      let!(:notes) { Fabricate.times(3, :note, user: user) }
+      let!(:other_user) { Fabricate(:user) }
+      let!(:other_notes) { Fabricate.times(3, :note, user: other_user) }
 
-    context 'authenticated' do
-      before(:each) { get_notes(user.auth_token) }
+      include_context 'unauthenticated' do
+        before(:each) { get_notes }
+      end
 
-      assert_response_code(200)
+      context 'authenticated' do
+        before(:each) { get_notes(user.auth_token) }
 
-      assert_json_schema('notes')
+        assert_response_code(200)
 
-      it 'returns the correct notes' do
-        response_notes = extract(response, :notes)
-        titles = response_notes.map { |note| note[:title] }
-        bodies = response_notes.map { |note| note[:body] }
-        response_tags = response_notes.map { |note| note[:tags] }
-        user_ids = response_notes.map { |note| note[:user_id] }.uniq
-        note_tags = notes.map { |note| note.tags_from(note.user) }
+        assert_json_schema('notes')
 
-        expect(response_notes.count).to eq notes.count
-        expect(titles).to match_array(notes.map(&:title))
-        expect(bodies).to match_array(notes.map(&:body))
-        expect(response_tags.flatten).to match_array(note_tags.flatten)
-        expect(user_ids).to include(user.id)
-        expect(user_ids).not_to include(other_user.id)
+        it 'returns the correct notes' do
+          response_notes = extract(response, :notes)
+          titles = response_notes.map { |note| note[:title] }
+          bodies = response_notes.map { |note| note[:body] }
+          response_tags = response_notes.map { |note| note[:tags] }
+          user_ids = response_notes.map { |note| note[:user_id] }.uniq
+          note_tags = notes.map { |note| note.tags_from(note.user) }
+
+          expect(response_notes.count).to eq notes.count
+          expect(titles).to match_array(notes.map(&:title))
+          expect(bodies).to match_array(notes.map(&:body))
+          expect(response_tags.flatten).to match_array(note_tags.flatten)
+          expect(user_ids).to include(user.id)
+          expect(user_ids).not_to include(other_user.id)
+        end
       end
     end
+
+    pending('with query parameters')
   end
 
   describe 'PATCH /notes/:id' do
