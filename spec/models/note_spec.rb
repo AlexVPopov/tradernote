@@ -39,37 +39,61 @@ RSpec.describe Note, type: :model, scope: :notes do
                 user: user
     end
 
-    it 'title_matches works correctly' do
-      title_matches('x', first_note)
-      title_matches('y', second_note)
-      title_matches('z', third_note)
+    context 'title_matches' do
+      include_examples 'scope returns all' do
+        let(:query) { Note.title_matches }
+      end
+
+      it 'works correctly with parameter' do
+        title_matches('x', first_note)
+        title_matches('y', second_note)
+        title_matches('z', third_note)
+      end
     end
 
-    it 'body_matches works correctly' do
-      body_matches('g', first_note)
-      body_matches('h', first_note, second_note)
-      body_matches('i', first_note, second_note, third_note)
-      body_matches('j', second_note, third_note)
-      body_matches('k', third_note)
-      body_matches('l', second_note)
+    context 'body_matches' do
+      include_examples 'scope returns all' do
+        let(:query) { Note.body_matches }
+      end
+
+      it 'works correctly with parameter' do
+        body_matches('g', first_note)
+        body_matches('h', first_note, second_note)
+        body_matches('i', first_note, second_note, third_note)
+        body_matches('j', second_note, third_note)
+        body_matches('k', third_note)
+        body_matches('l', second_note)
+      end
     end
 
-    it 'matches works correctly' do
-      matches('a', first_note)
-      matches('b', first_note, second_note)
-      matches('c', first_note, second_note, third_note)
-      matches('d', second_note, third_note)
-      matches('e', third_note)
-      matches('f', second_note)
-      matches('g', first_note)
-      matches('h', first_note, second_note)
-      matches('i', first_note, second_note, third_note)
-      matches('j', second_note, third_note)
-      matches('k', third_note)
-      matches('l', second_note)
-      matches('x', first_note)
-      matches('y', second_note)
-      matches('z', third_note)
+    context 'tag_matches' do
+      include_examples 'scope returns all' do
+        let(:query) { Note.tag_matches }
+      end
+    end
+
+    context 'any_matches' do
+      include_examples 'scope returns all' do
+        let(:query) { Note.any_matches }
+      end
+
+      it 'works correctly with parameter' do
+        matches('a', first_note)
+        matches('b', first_note, second_note)
+        matches('c', first_note, second_note, third_note)
+        matches('d', second_note, third_note)
+        matches('e', third_note)
+        matches('f', second_note)
+        matches('g', first_note)
+        matches('h', first_note, second_note)
+        matches('i', first_note, second_note, third_note)
+        matches('j', second_note, third_note)
+        matches('k', third_note)
+        matches('l', second_note)
+        matches('x', first_note)
+        matches('y', second_note)
+        matches('z', third_note)
+      end
     end
   end
 end

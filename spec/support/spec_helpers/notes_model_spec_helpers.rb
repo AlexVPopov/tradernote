@@ -9,6 +9,10 @@ module NotesModelSpecHelpers
   end
 
   def matches(query, *results)
-    expect(Note.matches(query)).to match_array(results)
+    expect(Note.any_matches(query)).to match_array(results)
+  end
+
+  def matches_all(query)
+    expect(query).to match_array(Note.all)
   end
 end
