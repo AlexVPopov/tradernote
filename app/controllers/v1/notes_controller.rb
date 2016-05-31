@@ -14,7 +14,7 @@ module V1
     end
 
     def index
-      render json: current_user.notes
+      render json: notes
     end
 
     def update
@@ -48,6 +48,14 @@ module V1
       def render_validation_failed(note)
         render json: {message: 'Validation failed', errors: note.errors.full_messages},
                status: :unprocessable_entity
+      end
+
+      def notes
+        current_user.notes
+                    .title_matches(params[:title])
+                    .body_matches(params[:body])
+                    .tag_matches(params[:tag])
+                    .any_matches(params[:any])
       end
   end
 end
