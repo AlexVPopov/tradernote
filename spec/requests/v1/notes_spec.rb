@@ -164,6 +164,13 @@ RSpec.describe 'Notes', type: :request, scope: :notes do
 
             expect(response_note[:tags]).to eq(note_params[:tags].split(',').map(&:strip))
           end
+
+          it 'removes tags', skip_before: true do
+            patch_note(note.id, {tags: nil}, note.user.auth_token)
+            response_note = JSON.parse(response.body, symbolize_names: true)[:note]
+
+            expect(response_note[:tags]).to be_blank
+          end
         end
 
         context 'with invalid paramters' do
