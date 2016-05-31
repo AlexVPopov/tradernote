@@ -14,7 +14,7 @@ module V1
     end
 
     def index
-      render json: notes
+      render json: filter_notes
     end
 
     def update
@@ -50,12 +50,13 @@ module V1
                status: :unprocessable_entity
       end
 
-      def notes
+      def filter_notes
         current_user.notes
                     .title_matches(params[:title])
                     .body_matches(params[:body])
                     .tag_matches(params[:tag])
                     .any_matches(params[:any])
+                    .distinct
       end
   end
 end
