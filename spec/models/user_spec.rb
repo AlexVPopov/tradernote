@@ -9,7 +9,7 @@ RSpec.describe User, type: :model do
   it { should have_db_index :email }
 
   context :associations do
-    it { should have_many(:notes) }
+    it { should have_many(:notes).dependent(:destroy) }
   end
 
   context :validations do

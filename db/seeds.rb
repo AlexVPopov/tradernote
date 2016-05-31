@@ -1,9 +1,5 @@
 # frozen_string_literal: true
-# This file should contain all the record creation needed to seed the database with its
-# default values. The data can then be loaded with the rake db:seed (or created alongside
-# the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+user = Fabricate(:user, auth_token: 'ca52d6bbeda7a0022a158ab4f1b86f9a')
+Fabricate(:note, title: 'xxx', body: 'ggg, hhh, iii', user_tags: 'aaa,bbb,ccc', user: user)
+Fabricate(:note, title: 'yyy', body: 'hhh, iii, jjj, lll', user_tags: 'bbb,ccc,ddd,fff', user: user)
+Fabricate(:note, title: 'zzz', body: 'iii,jjj,kkk', user_tags: 'ccc,ddd,eee', user: user)
