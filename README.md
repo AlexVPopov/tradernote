@@ -25,11 +25,19 @@ Import `spec/support/postman/Tradernote.postman_collection.json` in
   * in folder NOTE QUERYING the request uses the authentication token of the user from
     the seed data
 
-## Endpoints
+## Versioning
 
-All endpoints, except **Register** and **Authenticate** require an authentication token, provided
-in an `Authorization` request header, e.g.
-`Authorization: Token token=2a12e96e6b302fbe045fcee4a15cc08a`
+To request a particular version of the API, an `Accept` header is required in the format
+`Accept: application/vnd.tradernote.v1+json`. If no header is provided, the latest version
+is returned.
+
+## Authentication
+
+All endpoints, except **Register** and **Authenticate**, require an authentication token,
+provided in an `Authorization` request header, e.g.
+`Authorization: Token token=2a12e96e6b302fbe045fcee4a15cc08a`.
+
+## Endpoints
 
 #### Register
  * url: `/users`
